@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Indicadores Econômicos do Brasil (2015–2024)</title>
+<meta name="description" content="Projeto de análise e visualização de dados da economia brasileira: PIB, inflação, juros, desemprego e câmbio em 40 trimestres.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0E1420; --slate:#1A2234; --line:#263250; --paper:#EEF1F4;
+    --mute:#8A93A6; --amber:#E8A33D; --teal:#3BA89A; --clay:#C65D4B;
+    --disp:'Space Grotesk',system-ui,sans-serif;
+    --body:'Spectral',Georgia,serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--ink); color:var(--paper);
+    font-family:var(--body); font-size:18px; line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1040px; margin:0 auto; padding:0 24px}
+  a{color:inherit}
+  h1,h2,h3{font-family:var(--disp); font-weight:600; line-height:1.1; letter-spacing:-.01em}
+
+  /* ---------- Topo ---------- */
+  header.top{border-bottom:1px solid var(--line)}
+  .top .wrap{display:flex; justify-content:space-between; align-items:center;
+    padding-top:20px; padding-bottom:20px}
+  .brand{font-family:var(--disp); font-weight:700; font-size:15px; letter-spacing:.02em}
+  .brand .dot{color:var(--amber)}
+  nav.menu a{font-family:var(--disp); font-size:14px; color:var(--mute);
+    margin-left:22px; text-decoration:none; transition:color .2s}
+  nav.menu a:hover{color:var(--paper)}
+  @media(max-width:640px){nav.menu{display:none}}
+
+  /* ---------- Hero ---------- */
+  .hero{padding:72px 0 40px}
+  .kicker{font-family:var(--disp); font-size:14px; color:var(--amber);
+    font-weight:500; margin-bottom:18px}
+  .hero h1{font-size:clamp(34px,6vw,62px); max-width:16ch}
+  .hero p.lead{font-size:clamp(18px,2.4vw,22px); color:#B9C2D2;
+    max-width:60ch; margin-top:22px}
+  .chartcard{margin-top:44px; background:var(--slate); border:1px solid var(--line);
+    border-radius:16px; padding:26px 26px 18px}
+  .chartcard .ctitle{display:flex; justify-content:space-between; align-items:baseline;
+    flex-wrap:wrap; gap:8px; margin-bottom:14px}
+  .chartcard .ctitle h3{font-size:16px; font-weight:500; color:var(--paper)}
+  .chartcard .ctitle span{font-family:var(--disp); font-size:13px; color:var(--mute)}
+  svg.pib{width:100%; height:auto; display:block}
+  .pib-line{fill:none; stroke:var(--amber); stroke-width:2.5;
+    stroke-linejoin:round; stroke-linecap:round}
+  .legend{display:flex; gap:20px; margin-top:14px; flex-wrap:wrap}
+  .legend b{font-family:var(--disp); font-size:13px; font-weight:500; color:#B9C2D2;
+    display:flex; align-items:center; gap:7px}
+  .legend i{width:10px; height:10px; border-radius:50%; display:inline-block}
+
+  /* animação de desenho (uma só vez, no load) */
+  .pib-line{stroke-dasharray:4000; stroke-dashoffset:4000;
+    animation:draw 2.2s ease-out forwards}
+  .pib-dot{opacity:0; animation:pop .5s ease-out forwards; animation-delay:2s}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  @keyframes pop{to{opacity:1}}
+  @media(prefers-reduced-motion:reduce){
+    .pib-line{animation:none;stroke-dashoffset:0}
+    .pib-dot{animation:none;opacity:1}
+  }
+
+  /* ---------- CTAs ---------- */
+  .ctas{display:flex; gap:14px; flex-wrap:wrap; margin-top:34px}
+  .btn{font-family:var(--disp); font-weight:500; font-size:15px; text-decoration:none;
+    padding:13px 22px; border-radius:10px; transition:transform .15s, background .2s}
+  .btn:hover{transform:translateY(-2px)}
+  .btn.primary{background:var(--amber); color:#241400}
+  .btn.ghost{background:transparent; color:var(--paper); border:1px solid var(--line)}
+  .btn.ghost:hover{border-color:var(--amber)}
+  .note{font-size:14px; color:var(--mute); margin-top:14px}
+
+  /* ---------- Seções ---------- */
+  section{padding:64px 0; border-top:1px solid var(--line)}
+  section h2{font-size:clamp(26px,4vw,40px); margin-bottom:10px}
+  section .sub{color:var(--mute); font-family:var(--disp); font-size:14px; margin-bottom:34px}
+
+  /* perguntas */
+  .perguntas{display:grid; grid-template-columns:repeat(2,1fr); gap:14px 40px}
+  .perguntas li{list-style:none; padding:16px 0; border-bottom:1px solid var(--line);
+    font-size:19px; display:flex; gap:14px}
+  .perguntas li em{color:var(--amber); font-family:var(--disp); font-style:normal;
+    font-size:15px; padding-top:3px}
+  @media(max-width:640px){.perguntas{grid-template-columns:1fr}}
+
+  /* base / stats */
+  .stats{display:grid; grid-template-columns:repeat(3,1fr); gap:1px;
+    background:var(--line); border:1px solid var(--line); border-radius:14px; overflow:hidden}
+  .stat{background:var(--slate); padding:22px 20px}
+  .stat .v{font-family:var(--disp); font-weight:700; font-size:30px; color:var(--amber)}
+  .stat .l{font-size:15px; color:#B9C2D2; margin-top:4px}
+  @media(max-width:640px){.stats{grid-template-columns:1fr 1fr}}
+  .datatext{margin-top:28px; color:#C7CEDA; max-width:65ch}
+
+  /* metodologia (sequência real -> numeração justificada) */
+  .steps{counter-reset:s; display:grid; gap:2px}
+  .step{counter-increment:s; display:grid; grid-template-columns:54px 1fr;
+    gap:18px; padding:20px 0; border-bottom:1px solid var(--line); align-items:start}
+  .step::before{content:counter(s,decimal-leading-zero);
+    font-family:var(--disp); font-weight:600; font-size:18px; color:var(--amber)}
+  .step h3{font-size:19px; font-weight:500; margin-bottom:4px}
+  .step p{font-size:16px; color:#B9C2D2}
+
+  /* galeria de visualizações */
+  .gal{display:grid; grid-template-columns:repeat(2,1fr); gap:20px}
+  @media(max-width:700px){.gal{grid-template-columns:1fr}}
+  figure.shot{background:var(--slate); border:1px solid var(--line);
+    border-radius:14px; overflow:hidden}
+  figure.shot img{width:100%; display:block; background:#fff}
+  figure.shot figcaption{padding:14px 18px; font-size:15px; color:#B9C2D2}
+  figure.shot figcaption b{font-family:var(--disp); font-weight:500; color:var(--paper)}
+
+  /* tecnologias */
+  .techs{display:flex; flex-wrap:wrap; gap:10px}
+  .tag{font-family:var(--disp); font-size:14px; padding:8px 15px;
+    border:1px solid var(--line); border-radius:999px; color:#C7CEDA}
+  .tag.on{border-color:var(--amber); color:var(--amber)}
+
+  /* entregas */
+  .deliver{display:grid; grid-template-columns:repeat(3,1fr); gap:16px}
+  @media(max-width:640px){.deliver{grid-template-columns:1fr}}
+  .dcard{background:var(--slate); border:1px solid var(--line); border-radius:14px;
+    padding:24px; text-decoration:none; display:block; transition:border-color .2s}
+  .dcard:hover{border-color:var(--amber)}
+  .dcard .pin{font-family:var(--disp); font-size:13px; color:var(--mute)}
+  .dcard h3{font-size:20px; margin:8px 0 6px}
+  .dcard p{font-size:15px; color:#B9C2D2}
+
+  footer{border-top:1px solid var(--line); padding:40px 0 60px; color:var(--mute);
+    font-family:var(--disp); font-size:14px}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">Indicadores <span class="dot">·</span> Brasil</div>
+    <nav class="menu">
+      <a href="#perguntas">Perguntas</a>
+      <a href="#base">Base</a>
+      <a href="#metodo">Método</a>
+      <a href="#painel">Painel</a>
+      <a href="#entregas">Entregas</a>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero"><div class="wrap">
+  <p class="kicker">Projeto G1 · Análise e Visualização de Dados · Tema 17</p>
+  <h1>A economia brasileira em 40 trimestres</h1>
+  <p class="lead">Uma aplicação analítica sobre PIB, inflação, juros, desemprego
+  e câmbio entre 2015 e 2024 — construída para separar os períodos de crise,
+  estabilidade e crescimento e medir como os indicadores se relacionam.</p>
+
+  <div class="chartcard">
+    <div class="ctitle">
+      <h3>PIB trimestral, R$ milhões</h3>
+      <span>2015-T1 &rarr; 2024-T4</span>
+    </div>
+    <svg class="pib" viewBox="0 0 1000 300" preserveAspectRatio="none" role="img"
+         aria-label="Gráfico de linha da evolução do PIB trimestral brasileiro entre 2015 e 2024.">
+      <defs>
+        <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#E8A33D" stop-opacity="0.22"/>
+          <stop offset="100%" stop-color="#E8A33D" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <polygon fill="url(#fade)" points="8,276 8.0,204.1 33.2,248.3 58.5,69.5 83.7,89.1 108.9,242.9 134.2,76.5 159.4,24.0 184.6,234.1 209.8,56.9 235.1,40.7 260.3,161.4 285.5,136.1 310.8,25.3 336.0,45.1 361.2,207.1 386.5,54.5 411.7,128.6 436.9,32.9 462.2,163.9 487.4,33.3 512.6,127.0 537.8,216.5 563.1,106.1 588.3,118.9 613.5,169.3 638.8,86.9 664.0,208.0 689.2,192.8 714.5,234.7 739.7,219.8 764.9,62.3 790.2,32.0 815.4,233.3 840.6,260.7 865.8,276.0 891.1,265.3 916.3,246.6 941.5,143.0 966.8,74.7 992.0,165.1 992,276"/>
+      <polyline class="pib-line" points="8.0,204.1 33.2,248.3 58.5,69.5 83.7,89.1 108.9,242.9 134.2,76.5 159.4,24.0 184.6,234.1 209.8,56.9 235.1,40.7 260.3,161.4 285.5,136.1 310.8,25.3 336.0,45.1 361.2,207.1 386.5,54.5 411.7,128.6 436.9,32.9 462.2,163.9 487.4,33.3 512.6,127.0 537.8,216.5 563.1,106.1 588.3,118.9 613.5,169.3 638.8,86.9 664.0,208.0 689.2,192.8 714.5,234.7 739.7,219.8 764.9,62.3 790.2,32.0 815.4,233.3 840.6,260.7 865.8,276.0 891.1,265.3 916.3,246.6 941.5,143.0 966.8,74.7 992.0,165.1"/>
+      <g class="pib-dot"><circle cx="8.0" cy="204.1" r="3.6" fill="#C65D4B"/><circle cx="33.2" cy="248.3" r="3.6" fill="#C65D4B"/><circle cx="58.5" cy="69.5" r="3.6" fill="#E8A33D"/><circle cx="83.7" cy="89.1" r="3.6" fill="#C65D4B"/><circle cx="108.9" cy="242.9" r="3.6" fill="#3BA89A"/><circle cx="134.2" cy="76.5" r="3.6" fill="#3BA89A"/><circle cx="159.4" cy="24.0" r="3.6" fill="#E8A33D"/><circle cx="184.6" cy="234.1" r="3.6" fill="#3BA89A"/><circle cx="209.8" cy="56.9" r="3.6" fill="#C65D4B"/><circle cx="235.1" cy="40.7" r="3.6" fill="#C65D4B"/><circle cx="260.3" cy="161.4" r="3.6" fill="#3BA89A"/><circle cx="285.5" cy="136.1" r="3.6" fill="#3BA89A"/><circle cx="310.8" cy="25.3" r="3.6" fill="#E8A33D"/><circle cx="336.0" cy="45.1" r="3.6" fill="#3BA89A"/><circle cx="361.2" cy="207.1" r="3.6" fill="#C65D4B"/><circle cx="386.5" cy="54.5" r="3.6" fill="#3BA89A"/><circle cx="411.7" cy="128.6" r="3.6" fill="#C65D4B"/><circle cx="436.9" cy="32.9" r="3.6" fill="#3BA89A"/><circle cx="462.2" cy="163.9" r="3.6" fill="#E8A33D"/><circle cx="487.4" cy="33.3" r="3.6" fill="#E8A33D"/><circle cx="512.6" cy="127.0" r="3.6" fill="#3BA89A"/><circle cx="537.8" cy="216.5" r="3.6" fill="#C65D4B"/><circle cx="563.1" cy="106.1" r="3.6" fill="#C65D4B"/><circle cx="588.3" cy="118.9" r="3.6" fill="#C65D4B"/><circle cx="613.5" cy="169.3" r="3.6" fill="#E8A33D"/><circle cx="638.8" cy="86.9" r="3.6" fill="#3BA89A"/><circle cx="664.0" cy="208.0" r="3.6" fill="#3BA89A"/><circle cx="689.2" cy="192.8" r="3.6" fill="#C65D4B"/><circle cx="714.5" cy="234.7" r="3.6" fill="#C65D4B"/><circle cx="739.7" cy="219.8" r="3.6" fill="#E8A33D"/><circle cx="764.9" cy="62.3" r="3.6" fill="#C65D4B"/><circle cx="790.2" cy="32.0" r="3.6" fill="#E8A33D"/><circle cx="815.4" cy="233.3" r="3.6" fill="#C65D4B"/><circle cx="840.6" cy="260.7" r="3.6" fill="#3BA89A"/><circle cx="865.8" cy="276.0" r="3.6" fill="#E8A33D"/><circle cx="891.1" cy="265.3" r="3.6" fill="#E8A33D"/><circle cx="916.3" cy="246.6" r="3.6" fill="#E8A33D"/><circle cx="941.5" cy="143.0" r="3.6" fill="#3BA89A"/><circle cx="966.8" cy="74.7" r="3.6" fill="#E8A33D"/><circle cx="992.0" cy="165.1" r="3.6" fill="#3BA89A"/></g>
+    </svg>
+    <div class="legend">
+      <b><i style="background:#C65D4B"></i>Crise</b>
+      <b><i style="background:#E8A33D"></i>Estabilidade</b>
+      <b><i style="background:#3BA89A"></i>Crescimento</b>
+    </div>
+  </div>
+
+  <div class="ctas">
+    <a class="btn primary" href="#" id="link-dash">Abrir o dashboard</a>
+    <a class="btn ghost" href="#" id="link-repo">Ver o repositório</a>
+    <a class="btn ghost" href="notebooks/analise_indicadores_economicos.ipynb" id="link-nb">Ver o notebook</a>
+  </div>
+  <p class="note">Antes de publicar, troque os links acima pelos endereços reais
+  do seu GitHub e do Streamlit Cloud (veja o README).</p>
+</div></div>
+
+<!-- PERGUNTAS -->
+<section id="perguntas"><div class="wrap">
+  <h2>As perguntas que guiam a análise</h2>
+  <p class="sub">O que a aplicação foi construída para responder</p>
+  <ul class="perguntas">
+    <li><em>P1</em>Como o PIB evoluiu ao longo do tempo?</li>
+    <li><em>P2</em>Existe relação entre inflação e desemprego?</li>
+    <li><em>P3</em>Quais períodos tiveram maior crescimento econômico?</li>
+    <li><em>P4</em>A taxa de juros impacta o consumo das famílias?</li>
+    <li><em>P5</em>Quais indicadores foram mais instáveis?</li>
+    <li><em>P6</em>Como a renda média evoluiu e houve períodos críticos?</li>
+  </ul>
+</div></section>
+
+<!-- BASE -->
+<section id="base"><div class="wrap">
+  <h2>A base de dados</h2>
+  <p class="sub">simulacao_indicadores_economicos_brasil.csv</p>
+  <div class="stats">
+    <div class="stat"><div class="v">40</div><div class="l">trimestres analisados</div></div>
+    <div class="stat"><div class="v">2015–2024</div><div class="l">intervalo coberto</div></div>
+    <div class="stat"><div class="v">14</div><div class="l">colunas de indicadores</div></div>
+    <div class="stat"><div class="v">R$ 2,27 mi</div><div class="l">PIB médio</div></div>
+    <div class="stat"><div class="v">6,6%</div><div class="l">inflação média</div></div>
+    <div class="stat"><div class="v">9,3%</div><div class="l">desemprego médio</div></div>
+  </div>
+  <p class="datatext">Cada linha é um trimestre com PIB, inflação, Selic,
+  desemprego, câmbio, renda média, consumo, investimento, exportações e
+  importações, além de um rótulo de nível econômico (crise, estabilidade ou
+  crescimento). A base é <strong>simulada</strong>: serve para exercitar a
+  metodologia de análise, não para reconstruir a história econômica real.</p>
+</div></section>
+
+<!-- METODO -->
+<section id="metodo"><div class="wrap">
+  <h2>Como foi feito</h2>
+  <p class="sub">Um pipeline reprodutível, do CSV ao dashboard publicado</p>
+  <div class="steps">
+    <div class="step"><div></div><div><h3>Leitura e limpeza</h3>
+      <p>Normalização de nomes de coluna, conversão de tipos, verificação de
+      nulos e duplicatas e ordenação cronológica.</p></div></div>
+    <div class="step"><div></div><div><h3>Engenharia de atributos</h3>
+      <p>Saldo comercial, índice de miséria, variação do PIB (t/t e a/a) e
+      razão consumo/renda.</p></div></div>
+    <div class="step"><div></div><div><h3>KPIs</h3>
+      <p>PIB, inflação, desemprego, juros, câmbio e crescimento médios, com
+      variação dinâmica entre períodos.</p></div></div>
+    <div class="step"><div></div><div><h3>Visualização e correlação</h3>
+      <p>Séries temporais, heatmaps, dispersões, radar e matriz de correlação
+      de Pearson entre indicadores.</p></div></div>
+    <div class="step"><div></div><div><h3>Persistência relacional</h3>
+      <p>Banco SQLite via SQLAlchemy, com tabela fato e dimensão integradas
+      por consultas SQL com JOIN.</p></div></div>
+    <div class="step"><div></div><div><h3>Publicação</h3>
+      <p>Código no GitHub, esta página no GitHub Pages e o dashboard no
+      Streamlit Community Cloud.</p></div></div>
+  </div>
+</div></section>
+
+<!-- PAINEL -->
+<section id="painel"><div class="wrap">
+  <h2>O que o painel mostra</h2>
+  <p class="sub">Seis leituras da economia, exploráveis por ano, trimestre e nível</p>
+  <div class="gal">
+    <figure class="shot"><img src="imagens/pib_evolucao.png" alt="Linha temporal do PIB">
+      <figcaption><b>Linha temporal.</b> Evolução do PIB com marcação dos níveis econômicos.</figcaption></figure>
+    <figure class="shot"><img src="imagens/inflacao_desemprego.png" alt="Dispersão inflação x desemprego">
+      <figcaption><b>Dispersão.</b> Inflação contra desemprego e a reta de tendência.</figcaption></figure>
+    <figure class="shot"><img src="imagens/heatmap_correlacao.png" alt="Matriz de correlação">
+      <figcaption><b>Correlação.</b> Como cada par de indicadores se move em conjunto.</figcaption></figure>
+    <figure class="shot"><img src="imagens/heatmap_trimestral.png" alt="Heatmap trimestral do PIB">
+      <figcaption><b>Heatmap trimestral.</b> PIB por ano e trimestre.</figcaption></figure>
+    <figure class="shot"><img src="imagens/barras_comparativas.png" alt="Barras comparativas por nível">
+      <figcaption><b>Barras comparativas.</b> Médias por nível econômico.</figcaption></figure>
+    <figure class="shot"><img src="imagens/radar_indicadores.png" alt="Radar de indicadores">
+      <figcaption><b>Radar.</b> Assinatura de cada regime econômico.</figcaption></figure>
+  </div>
+</div></section>
+
+<!-- TECNOLOGIAS -->
+<section id="tech"><div class="wrap">
+  <h2>Tecnologias</h2>
+  <p class="sub">Obrigatórias em destaque; recomendadas em complemento</p>
+  <div class="techs">
+    <span class="tag on">Python</span>
+    <span class="tag on">Pandas</span>
+    <span class="tag on">Matplotlib</span>
+    <span class="tag on">Seaborn</span>
+    <span class="tag on">Streamlit</span>
+    <span class="tag on">GitHub</span>
+    <span class="tag">NumPy</span>
+    <span class="tag">Plotly</span>
+    <span class="tag">SQLAlchemy</span>
+    <span class="tag">SQLite</span>
+  </div>
+</div></section>
+
+<!-- ENTREGAS -->
+<section id="entregas"><div class="wrap">
+  <h2>Entregas</h2>
+  <p class="sub">Os três destinos de publicação do projeto</p>
+  <div class="deliver">
+    <a class="dcard" href="#" id="d-repo"><div class="pin">GitHub</div>
+      <h3>Código-fonte</h3><p>Repositório com app, notebook, dados e documentação.</p></a>
+    <a class="dcard" href="#" id="d-pages"><div class="pin">GitHub Pages</div>
+      <h3>Esta página</h3><p>Apresentação pública do projeto.</p></a>
+    <a class="dcard" href="#" id="d-dash"><div class="pin">Streamlit Cloud</div>
+      <h3>Dashboard</h3><p>Painel interativo com filtros, KPIs e gráficos.</p></a>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  Projeto G1 — Tema 17 · Indicadores Econômicos do Brasil · Python, Pandas, Streamlit
+</div></footer>
+
+</body>
+</html>
