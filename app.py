@@ -67,6 +67,12 @@ def preparar_banco(_df: pd.DataFrame):
 # Barra lateral: upload, navegação e filtros
 # ---------------------------------------------------------------------------
 st.sidebar.title("📊 Indicadores BR")
+st.markdown(
+    "**Aluno:** Gabryel Duarte Pessanha \n"
+    "**Professor: Alexandre Louzada \n"
+    "**Materia: Linguagens de programação \n"
+)
+st.divider()
 st.sidebar.caption("Economia brasileira · 2015–2024")
 
 arquivo = st.sidebar.file_uploader(
