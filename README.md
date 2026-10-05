@@ -1,5 +1,8 @@
 # 📊 Indicadores Econômicos do Brasil (2015–2024)
 
+Nome: Gabryel Duarte Pessanha
+Professor: Alexandre Louzada
+
 Projeto **G1 — Análise e Visualização de Dados com Python · Tema 17**.
 
 Aplicação analítica sobre a economia brasileira a partir de uma base simulada
