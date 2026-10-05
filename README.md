@@ -19,9 +19,9 @@ Substitua pelos seus endereços após publicar:
 
 | Plataforma | Objetivo | Link |
 |---|---|---|
-| GitHub | Código-fonte | `https://github.com/gabryelduartepesssanha/projeto-indicadores-economicos` |
-| GitHub Pages | Página do projeto | `https://gabryelduartepesssanha.github.io/projeto-indicadores-economicos/` |
-| Streamlit Cloud | Dashboard | `https://projeto-indicadores-economicos.streamlit.app` |
+| GitHub | Código-fonte | `https://github.com/gabryelduartepessanha/projeto-indicadores-economicos` |
+| GitHub Pages | Página do projeto | `https://gabryelduartepessanha.github.io/projeto-indicadores-economicos/#` |
+| Streamlit Cloud | Dashboard | `https://projeto-indicadores-economicos.streamlit.app/` |
 
 ---
 
