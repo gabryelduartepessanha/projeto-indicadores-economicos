@@ -69,8 +69,8 @@ def preparar_banco(_df: pd.DataFrame):
 st.sidebar.title("📊 Indicadores BR")
 st.markdown(
     "**Aluno:** Gabryel Duarte Pessanha \n"
-    "**Professor: Alexandre Louzada \n"
-    "**Materia: Linguagens de programação \n"
+    "**Professor:** Alexandre Louzada \n"
+    "**Materia:** Linguagens de programação \n"
 )
 st.divider()
 st.sidebar.caption("Economia brasileira · 2015–2024")
