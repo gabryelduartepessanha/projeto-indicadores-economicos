@@ -1,15 +1,3 @@
-"""
-app.py — Dashboard "Indicadores Econômicos do Brasil (2015–2024)"
-=================================================================
-Projeto G1 — Análise e Visualização de Dados com Python (Tema 17).
-
-Dashboard interativo multipágina construído com Streamlit. Integra múltiplas
-fontes (CSV + banco SQLite), KPIs dinâmicos, filtros múltiplos, séries
-temporais, correlação estatística e visualizações interativas (Plotly).
-
-Execução local:
-    streamlit run app.py
-"""
 import numpy as np
 import pandas as pd
 import plotly.express as px
