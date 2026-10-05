@@ -2,6 +2,7 @@
 
 Nome: Gabryel Duarte Pessanha
 Professor: Alexandre Louzada
+Disciplina: Linguagens de programação
 
 Projeto **G1 — Análise e Visualização de Dados com Python · Tema 17**.
 
